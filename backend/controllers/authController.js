@@ -1,11 +1,11 @@
 const authService = require("../services/authService");
 
-// ✅ SIGNUP
+
 exports.signup = async (req, res) => {
   try {
     const user = await authService.signup(req.body);
 
-    // 🔒 Remove sensitive fields (like password)
+    
     res.status(201).json({
       message: "Signup successful",
       user: {
@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-// ✅ LOGIN
+
 exports.login = async (req, res) => {
   try {
     const { user, token, permissions } = await authService.login(req.body);

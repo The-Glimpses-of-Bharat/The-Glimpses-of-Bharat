@@ -1,7 +1,7 @@
 const Fighter = require("../models/Fighter");
 
 class FighterService {
-  // ✅ CREATE (with duplicate detection)
+  //  CREATE (with duplicate detection)
   static async createFighter(data, user) {
     const existing = await Fighter.findOne({
       name: { $regex: `^${data.name}$`, $options: "i" },
@@ -15,27 +15,27 @@ class FighterService {
     });
   }
 
-  // ✅ GET ALL
+  //  GET ALL
   static async getAllFighters() {
     return await Fighter.find();
   }
 
-  // ✅ GET ONE
+  //  GET ONE
   static async getFighterById(id) {
     return await Fighter.findById(id);
   }
 
-  // ✅ UPDATE
+  //  UPDATE
   static async updateFighter(id, data) {
     return await Fighter.findByIdAndUpdate(id, data, { new: true });
   }
 
-  // ✅ DELETE
+  //  DELETE
   static async deleteFighter(id) {
     return await Fighter.findByIdAndDelete(id);
   }
 
-  // ✅ APPROVE
+  // APPROVE
   static async approveFighter(id) {
     const fighter = await Fighter.findByIdAndUpdate(
       id,
@@ -48,7 +48,7 @@ class FighterService {
     return fighter;
   }
 
-  // ❌ REJECT
+  //  REJECT
   static async rejectFighter(id) {
     const fighter = await Fighter.findByIdAndUpdate(
       id,
