@@ -7,15 +7,53 @@ const {
   getFighter,
   updateFighter,
   deleteFighter,
+  approveFighter,   // ✅ NEW
+  rejectFighter     // ✅ NEW
 } = require("../controllers/fighterController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
+// ✅ Public routes
 router.get("/", getAllFighters);
 router.get("/:id", getFighter);
 
-router.post("/", protect, authorize("admin", "contributor"), createFighter);
-router.put("/:id", protect, authorize("admin"), updateFighter);
-router.delete("/:id", protect, authorize("admin"), deleteFighter);
+// ✅ Create (user allowed)
+router.post(
+  "/",
+  protect,
+  authorize("admin", "contributor", "user"),
+  createFighter
+);
+
+// ✅ Update (admin only)
+router.put(
+  "/:id",
+  protect,
+  authorize("admin"),
+  updateFighter
+);
+
+// ✅ Delete (admin only)
+router.delete(
+  "/:id",
+  protect,
+  authorize("admin"),
+  deleteFighter
+);
+
+// 🔥 ADMIN ACTIONS
+router.patch(
+  "/:id/approve",
+  protect,
+  authorize("admin"),
+  approveFighter
+);
+
+router.patch(
+  "/:id/reject",
+  protect,
+  authorize("admin"),
+  rejectFighter
+);
 
 module.exports = router;

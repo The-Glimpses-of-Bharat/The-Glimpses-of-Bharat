@@ -8,7 +8,6 @@ const fighterSchema = new mongoose.Schema({
   deathYear: Number,
   contributions: String,
 
-
   status: {
     type: String,
     enum: ["pending", "approved", "rejected"],
@@ -19,6 +18,12 @@ const fighterSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+
+  
+  isDuplicate: {
+    type: Boolean,
+    default: false
+  }
 });
 
-module.exports = mongoose.model("Fighter", fighterSchema); 
+module.exports = mongoose.model("Fighter", fighterSchema);

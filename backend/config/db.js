@@ -1,16 +1,18 @@
 const mongoose = require("mongoose");
+require("dotenv").config();  
 
 const connectDB = async () => {
-  if (!process.env.MONGO_URI || process.env.MONGO_URI === "temporary_placeholder") {
-    console.log("⚠️ MongoDB not connected");
-    return;
-  }
-
   try {
+    if (!process.env.MONGO_URI) {
+      console.log("MONGO_URI missing in .env");
+      process.exit(1);
+    }
+
     const conn = await mongoose.connect(process.env.MONGO_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+
+    console.log(` MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(error.message);
+    console.error("DB Error:", error.message);
     process.exit(1);
   }
 };

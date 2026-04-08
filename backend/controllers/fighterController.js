@@ -1,29 +1,99 @@
 const FighterService = require("../services/fighterService");
 
+// ✅ CREATE
 exports.createFighter = async (req, res) => {
-  const fighter = await FighterService.createFighter(req.body, req.user);
-  res.status(201).json(fighter);
+  try {
+    const fighter = await FighterService.createFighter(req.body, req.user);
+    res.status(201).json(fighter);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to create fighter",
+    });
+  }
 };
 
+// ✅ GET ALL
 exports.getAllFighters = async (req, res) => {
-  const fighters = await FighterService.getAllFighters();
-  res.json(fighters);
+  try {
+    const fighters = await FighterService.getAllFighters();
+    res.json(fighters);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to fetch fighters",
+    });
+  }
 };
 
+// ✅ GET ONE
 exports.getFighter = async (req, res) => {
-  const fighter = await FighterService.getFighterById(req.params.id);
-  res.json(fighter);
+  try {
+    const fighter = await FighterService.getFighterById(req.params.id);
+
+    if (!fighter) {
+      return res.status(404).json({ message: "Fighter not found" });
+    }
+
+    res.json(fighter);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to fetch fighter",
+    });
+  }
 };
 
+// ✅ UPDATE
 exports.updateFighter = async (req, res) => {
-  const fighter = await FighterService.updateFighter(
-    req.params.id,
-    req.body
-  );
-  res.json(fighter);
+  try {
+    const fighter = await FighterService.updateFighter(
+      req.params.id,
+      req.body
+    );
+
+    if (!fighter) {
+      return res.status(404).json({ message: "Fighter not found" });
+    }
+
+    res.json(fighter);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to update fighter",
+    });
+  }
 };
 
+// ✅ DELETE
 exports.deleteFighter = async (req, res) => {
-  await FighterService.deleteFighter(req.params.id);
-  res.json({ message: "Deleted" });
+  try {
+    const fighter = await FighterService.deleteFighter(req.params.id);
+
+    if (!fighter) {
+      return res.status(404).json({ message: "Fighter not found" });
+    }
+
+    res.json({ message: "Fighter deleted successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to delete fighter",
+    });
+  }
+};
+
+// ✅ APPROVE (ADMIN)
+exports.approveFighter = async (req, res) => {
+  try {
+    const fighter = await FighterService.approveFighter(req.params.id);
+    res.json(fighter);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+// ❌ REJECT (ADMIN)
+exports.rejectFighter = async (req, res) => {
+  try {
+    const fighter = await FighterService.rejectFighter(req.params.id);
+    res.json(fighter);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
