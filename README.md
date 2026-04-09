@@ -133,12 +133,54 @@ Ensures **normalized and efficient data design**.
 
 ### 🧱 Class Diagram
 
-Models the backend using OOP:
+The Class Diagram represents the object-oriented structure of the application, showing how different classes, their attributes, methods, and relationships are organized in the system.
 
-* Base **User class** with derived roles
-* Feature-specific classes like Quiz, Game, Contribution
+ <!-- Overview -->
+I designed this diagram to model the backend architecture using OOP principles. It includes core entities such as User, Admin, Contributor, HistoricalFigure, Contribution, Quiz, Game, Subscription, and ChatInteraction.
+The diagram reflects how different components of the system are structured and how they interact at the code level.
 
-Promotes **modularity and reusability**.
+ <!-- Core Classes -->
+The system is built around the following key classes:
+User → Base class with common attributes and methods
+Admin, Contributor, PremiumUser → Derived classes (inherit from User)
+HistoricalFigure → Stores information about fighters
+Contribution → Handles user-submitted data
+Book & Journal → Represents premium content
+Quiz & Question → Manages quiz functionality
+Game & GameSession → Handles gameplay logic
+Subscription → Manages premium access
+ChatInteraction → Handles AI chatbot queries
+
+ <!-- Relationships -->
+The diagram includes multiple types of relationships:
+Inheritance (Generalization)
+Admin, Contributor, PremiumUser → extend User
+Associations
+User → Contribution
+HistoricalFigure → Book / Journal
+Quiz → Question
+Aggregation / Composition
+Quiz → Questions (strong relationship)
+Game → GameSession
+These relationships ensure a modular and well-connected system design.
+
+ <!-- Design Approach -->
+Followed Object-Oriented Design (OOD) principles
+Ensured separation of concerns across classes
+Used inheritance to avoid redundancy
+Designed classes to be reusable and scalable
+
+ <!-- Why I Created This -->
+This diagram helped me:
+Plan the backend structure before implementation
+Understand how different modules interact
+Maintain a clean and modular codebase
+Map real-world features into structured classes
+
+ <!-- Key Takeaway -->
+
+The Class Diagram provides a blueprint of the system’s code structure, ensuring that the backend is well-organized, maintainable, and aligned with object-oriented best practices.
+
 
 ---
 
