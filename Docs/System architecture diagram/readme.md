@@ -1,5 +1,6 @@
 System Architecture Diagram
-🔗 View Diagram: https://lucid.app/lucidspark/78eff628-2b0b-4f52-8a32-d53582f6a663/edit?view_items=~_iM~f3X_edu&page=0_0&invitationId=inv_36d559c7-55dc-47b4-acb2-dba85f8e982e
+
+View Diagram: https://lucid.app/lucidspark/78eff628-2b0b-4f52-8a32-d53582f6a663/edit?view_items=~_iM~f3X_edu&page=0_0&invitationId=inv_36d559c7-55dc-47b4-acb2-dba85f8e982e
 
 The System Architecture Diagram provides a high-level overview of how different components of the application are structured and how they interact with each other.
 
