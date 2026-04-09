@@ -6,7 +6,7 @@ const {
   getPending,
   getApproved,
   getRejected,
-} = require("../controllers/contributorController");
+} = require("../controllers/contributionController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
