@@ -1,6 +1,6 @@
 const FighterService = require("../services/fighterService");
 
-
+// CREATE
 exports.createFighter = async (req, res) => {
   try {
     const fighter = await FighterService.createFighter(req.body, req.user);
@@ -12,7 +12,7 @@ exports.createFighter = async (req, res) => {
   }
 };
 
-
+// GET ALL
 exports.getAllFighters = async (req, res) => {
   try {
     const fighters = await FighterService.getAllFighters();
@@ -24,7 +24,7 @@ exports.getAllFighters = async (req, res) => {
   }
 };
 
-
+// GET ONE
 exports.getFighter = async (req, res) => {
   try {
     const fighter = await FighterService.getFighterById(req.params.id);
@@ -41,7 +41,7 @@ exports.getFighter = async (req, res) => {
   }
 };
 
-
+// UPDATE
 exports.updateFighter = async (req, res) => {
   try {
     const fighter = await FighterService.updateFighter(
@@ -61,7 +61,7 @@ exports.updateFighter = async (req, res) => {
   }
 };
 
-
+// DELETE
 exports.deleteFighter = async (req, res) => {
   try {
     const fighter = await FighterService.deleteFighter(req.params.id);
@@ -78,7 +78,7 @@ exports.deleteFighter = async (req, res) => {
   }
 };
 
-
+// APPROVE
 exports.approveFighter = async (req, res) => {
   try {
     const fighter = await FighterService.approveFighter(req.params.id);
@@ -88,7 +88,7 @@ exports.approveFighter = async (req, res) => {
   }
 };
 
-
+// REJECT
 exports.rejectFighter = async (req, res) => {
   try {
     const fighter = await FighterService.rejectFighter(req.params.id);
@@ -97,27 +97,3 @@ exports.rejectFighter = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
-static async getApprovedFighters() {
-  return await Fighter.find({ status: "approved" });
-}
-
-static async getPendingFighters() {
-  return await Fighter.find({ status: "pending" });
-}
-
-static async approveFighter(id) {
-  return await Fighter.findByIdAndUpdate(
-    id,
-    { status: "approved" },
-    { new: true }
-  );
-}
-
-static async rejectFighter(id) {
-  return await Fighter.findByIdAndUpdate(
-    id,
-    { status: "rejected" },
-    { new: true }
-  );
-}
