@@ -1,21 +1,12 @@
 const authService = require("../services/authService");
 
-
 exports.signup = async (req, res) => {
   try {
     const user = await authService.signup(req.body);
 
-    
     res.status(201).json({
       message: "Signup successful",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isPremium: user.isPremium,
-        createdAt: user.createdAt,
-      },
+      user,
     });
   } catch (error) {
     res.status(400).json({
@@ -24,23 +15,13 @@ exports.signup = async (req, res) => {
   }
 };
 
-
 exports.login = async (req, res) => {
   try {
-    const { user, token, permissions } = await authService.login(req.body);
+    const data = await authService.login(req.body);
 
-    
     res.json({
       message: "Login successful",
-      token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isPremium: user.isPremium,
-      },
-      permissions,
+      ...data,
     });
   } catch (error) {
     res.status(400).json({
