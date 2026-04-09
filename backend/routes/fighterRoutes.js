@@ -3,27 +3,32 @@ const router = express.Router();
 
 const {
   createFighter,
-  getAllFighters,
   getFighter,
   updateFighter,
   deleteFighter,
-  approveFighter,   
-  rejectFighter     
+  approveFighter,
+  rejectFighter,
+  getApprovedFighters,
+  getPendingFighters
 } = require("../controllers/fighterController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
-router.get("/", getAllFighters);
+// ✅ Public (only approved fighters)
+router.get("/", getApprovedFighters);
+
+// Get single fighter
 router.get("/:id", getFighter);
 
+// Create fighter
 router.post(
-"/",
+  "/",
   protect,
   authorize("admin", "contributor", "user"),
   createFighter
 );
 
-
+// Update fighter
 router.put(
   "/:id",
   protect,
@@ -31,6 +36,7 @@ router.put(
   updateFighter
 );
 
+// Delete fighter
 router.delete(
   "/:id",
   protect,
@@ -38,6 +44,13 @@ router.delete(
   deleteFighter
 );
 
+// Admin workflow
+router.get(
+  "/pending",
+  protect,
+  authorize("admin"),
+  getPendingFighters
+);
 
 router.patch(
   "/:id/approve",
@@ -52,20 +65,5 @@ router.patch(
   authorize("admin"),
   rejectFighter
 );
-
-const {
-  getApprovedFighters,
-  getPendingFighters,
-  approveFighter,
-  rejectFighter,
-} = require("../controllers/fighterController");
-
-// Replace public GET
-router.get("/", getApprovedFighters);
-
-// Admin workflow
-router.get("/pending", protect, authorize("admin"), getPendingFighters);
-router.put("/:id/approve", protect, authorize("admin"), approveFighter);
-router.put("/:id/reject", protect, authorize("admin"), rejectFighter);
 
 module.exports = router;

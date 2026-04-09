@@ -6,21 +6,27 @@ exports.createFighter = async (req, res) => {
     const fighter = await FighterService.createFighter(req.body, req.user);
     res.status(201).json(fighter);
   } catch (error) {
-    res.status(500).json({
-      message: error.message || "Failed to create fighter",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// GET ALL
-exports.getAllFighters = async (req, res) => {
+// GET APPROVED (public)
+exports.getApprovedFighters = async (req, res) => {
   try {
-    const fighters = await FighterService.getAllFighters();
+    const fighters = await FighterService.getApprovedFighters();
     res.json(fighters);
   } catch (error) {
-    res.status(500).json({
-      message: error.message || "Failed to fetch fighters",
-    });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET PENDING (admin)
+exports.getPendingFighters = async (req, res) => {
+  try {
+    const fighters = await FighterService.getPendingFighters();
+    res.json(fighters);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -35,9 +41,7 @@ exports.getFighter = async (req, res) => {
 
     res.json(fighter);
   } catch (error) {
-    res.status(500).json({
-      message: error.message || "Failed to fetch fighter",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -55,9 +59,7 @@ exports.updateFighter = async (req, res) => {
 
     res.json(fighter);
   } catch (error) {
-    res.status(500).json({
-      message: error.message || "Failed to update fighter",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -72,9 +74,7 @@ exports.deleteFighter = async (req, res) => {
 
     res.json({ message: "Fighter deleted successfully" });
   } catch (error) {
-    res.status(500).json({
-      message: error.message || "Failed to delete fighter",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
