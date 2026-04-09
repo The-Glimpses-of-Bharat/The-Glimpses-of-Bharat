@@ -97,3 +97,27 @@ exports.rejectFighter = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+static async getApprovedFighters() {
+  return await Fighter.find({ status: "approved" });
+}
+
+static async getPendingFighters() {
+  return await Fighter.find({ status: "pending" });
+}
+
+static async approveFighter(id) {
+  return await Fighter.findByIdAndUpdate(
+    id,
+    { status: "approved" },
+    { new: true }
+  );
+}
+
+static async rejectFighter(id) {
+  return await Fighter.findByIdAndUpdate(
+    id,
+    { status: "rejected" },
+    { new: true }
+  );
+}

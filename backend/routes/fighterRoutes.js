@@ -17,7 +17,7 @@ router.get("/", getAllFighters);
 router.get("/:id", getFighter);
 
 router.post(
-  "/",
+"/",
   protect,
   authorize("admin", "contributor", "user"),
   createFighter
@@ -52,5 +52,20 @@ router.patch(
   authorize("admin"),
   rejectFighter
 );
+
+const {
+  getApprovedFighters,
+  getPendingFighters,
+  approveFighter,
+  rejectFighter,
+} = require("../controllers/fighterController");
+
+// Replace public GET
+router.get("/", getApprovedFighters);
+
+// Admin workflow
+router.get("/pending", protect, authorize("admin"), getPendingFighters);
+router.put("/:id/approve", protect, authorize("admin"), approveFighter);
+router.put("/:id/reject", protect, authorize("admin"), rejectFighter);
 
 module.exports = router;
