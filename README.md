@@ -1,124 +1,229 @@
 # 🌏 Glimpse of Bharat – Backend
 
-A scalable backend for the **Glimpse of Bharat** application, managing freedom fighters data, user contributions, quizzes, and more.
+A **robust and scalable backend system** for the *Glimpse of Bharat* application.
+This server manages historical data on freedom fighters, handles user-generated contributions, powers educational quizzes, and is designed using modern backend architecture and design patterns.
 
 ---
 
-## 🚀 Tech Stack
+# 🚀 Tech Stack
 
-* Node.js, Express.js
-* MongoDB + Mongoose
-* dotenv
+* **Runtime:** Node.js
+* **Framework:** Express.js
+* **Database:** MongoDB (with Mongoose ODM)
+* **Security:** JWT (planned), dotenv, Helmet, CORS
+* **Design Patterns:** Factory Pattern, Strategy Pattern
 
 ---
 
-## 📁 Project Structure
+# 📂 Project Structure
 
-```
+```plaintext
 backend/
-├── config/        # DB connection
-├── routes/        # API routes
-├── models/        # Schemas (planned)
-├── controllers/   # Logic (planned)
-├── middleware/    # Auth, errors (planned)
-├── server.js      # Entry point
-└── .env
+├── config/             # Database & environment configurations
+├── controllers/        # Business logic for each route
+├── middleware/         # Authentication, error handling, validation
+├── models/             # Mongoose schemas (User, Fighter, Quiz)
+├── routes/             # API endpoint definitions
+├── utils/              # Helper functions & design patterns
+├── server.js           # Application entry point
+└── .env                # Environment variables (gitignored)
 ```
 
 ---
 
-## 🌐 API Overview
+# 🌐 API Reference
 
-* `GET /` → Check server status
-* Auth → Register/Login (planned)
-* Fighters → Fetch data
-* Contributions → Submit & approve
-* Quiz → Fetch & submit answers
+## 🔹 General
+
+| Method | Endpoint | Description                  |
+| ------ | -------- | ---------------------------- |
+| GET    | `/`      | Health check / Server status |
 
 ---
 
-## ⚙️ Setup
+## 🧑‍🏫 Freedom Fighters *(In Progress)*
+
+| Method | Endpoint            | Description                         |
+| ------ | ------------------- | ----------------------------------- |
+| GET    | `/api/fighters`     | Fetch all freedom fighters          |
+| GET    | `/api/fighters/:id` | Fetch details of a specific fighter |
+
+---
+
+## ✍️ Contributions & Quiz
+
+| Method | Endpoint          | Description                     |
+| ------ | ----------------- | ------------------------------- |
+| POST   | `/api/contribute` | Submit new data for review      |
+| GET    | `/api/quiz`       | Fetch randomized quiz questions |
+
+---
+
+# ⚙️ Installation & Setup
+
+## 1️⃣ Clone the repository
 
 ```bash
-git clone <repo>
+git clone <your-repo-url>
 cd backend
+```
+
+---
+
+## 2️⃣ Install dependencies
+
+```bash
 npm install
 ```
 
-Create `.env`:
+---
 
-```
-MONGO_URI=your_uri
+## 3️⃣ Environment Configuration
+
+Create a `.env` file in the root directory:
+
+```env
 PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/glimpseDB
+JWT_SECRET=your_super_secret_key
 ```
 
-Run:
+---
+
+## 4️⃣ Run the server
 
 ```bash
-node server.js
+# Development mode
+npm run dev
+
+# Production mode
+npm start
 ```
 
 ---
 
-## 🔌 Database
+# 🏗️ System Architecture & Design
 
-MongoDB connected via Mongoose:
+To ensure scalability, modularity, and maintainability, the system is designed using structured diagrams and patterns:
 
-```
-MongoDB Connected ✅
-```
+### 🎭 Use Case Diagram
 
----
+Defines system interactions for different roles:
 
-## 📊 System Design & Diagrams
-
-To ensure a clean and scalable system, the following diagrams were designed:
-
-* **Use Case Diagram** → Defines user roles & interactions (User, Admin, Contributor, Premium)
-* **ER Diagram** → Designs database (User, Fighter, Contribution, Quiz, etc.)
-* **Class Diagram** → Backend OOP structure with inheritance
-* **Sequence Diagram** → Request-response flows (auth, contributions, chatbot)
-* **Architecture Diagram** → Frontend + Backend + DB + APIs
-
-These help in building a **modular, maintainable, and scalable system**.
+* **User** → Basic features
+* **Premium User** → Exclusive content access
+* **Contributor** → Submit/edit content
+* **Admin** → Moderation and system control
 
 ---
 
-## 🧩 Design Patterns Used
+### 🗂️ ER Diagram
 
-* **Factory Pattern** → Used for creating different user types (Admin, Contributor, Premium User) dynamically based on role.
-* **Strategy Pattern** → Used in payment system to support multiple payment methods (e.g., UPI, Card, etc.) by switching algorithms at runtime.
+Represents database structure and relationships between:
 
-These patterns help keep the system flexible, scalable, and easy to extend.
+* User
+* Fighter
+* Contribution
+* Quiz
+* Chat Logs
 
----
-
-## 🧠 Future Scope
-
-* TypeScript migration
-* MVC architecture
-* Auth & role-based access
-* Full CRUD APIs
-* AI chatbot
+Ensures **normalized and efficient data design**.
 
 ---
 
-## 📌 Roadmap
+### 🧱 Class Diagram
 
-1. Backend setup ✅
-2. Auth system 🔜
-3. Core modules
-4. Admin flow
-5. Advanced features
+Models the backend using OOP:
 
----
+* Base **User class** with derived roles
+* Feature-specific classes like Quiz, Game, Contribution
 
-## 🤝 Contributing
-
-Pull requests are welcome.
+Promotes **modularity and reusability**.
 
 ---
 
-## 📄 License
+### 🔄 Sequence Diagram
 
-Educational use only.
+Shows runtime interactions such as:
+
+* Authentication (JWT flow)
+* Fetching fighters
+* AI chatbot interaction
+* Contribution submission
+* Admin moderation
+
+Helps visualize **request-response lifecycle**.
+
+---
+
+### 🏗️ System Architecture Diagram
+
+Illustrates the complete system:
+
+* **Frontend (React)**
+* **Backend (Node.js + Express)**
+* **Database (MongoDB)**
+* **AI Services**
+
+Ensures clear **separation of concerns and scalability**.
+
+---
+
+# 🧠 Design Patterns Used
+
+### 🏭 Factory Pattern
+
+Used to dynamically create user objects based on roles during authentication and registration.
+
+---
+
+### 🎯 Strategy Pattern
+
+Encapsulates different payment methods (e.g., UPI, Card) allowing flexible and extendable checkout logic.
+
+---
+
+# 🧭 Roadmap
+
+* [x] Initial Express + MongoDB setup
+* [ ] Implement JWT Authentication & RBAC
+* [ ] Migrate to TypeScript
+* [ ] Integrate AI Chatbot
+* [ ] Build Admin Dashboard (CRUD operations)
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome and appreciated!
+
+1. Fork the repository
+2. Create a feature branch
+
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit your changes
+
+   ```bash
+   git commit -m "Add AmazingFeature"
+   ```
+4. Push to the branch
+
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+Distributed under the **MIT License**.
+See `LICENSE` for more information.
+
+---
+
+# 💡 Final Note
+
+This backend is designed with a strong focus on **scalability, clean architecture, and real-world system design principles**, making it suitable for both learning and production-level extension.
