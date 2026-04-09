@@ -1,6 +1,6 @@
 # 🔄 Sequence Diagram
 
-🔗 **View Diagram:** [https://drive.google.com/file/d/1aByMrk6xpBfIW6zmVLfXlBcQ5qZa7FYG/view?usp=sharing](#)
+🔗 **View Diagram:** https://drive.google.com/file/d/1aByMrk6xpBfIW6zmVLfXlBcQ5qZa7FYG/view?usp=sharing
 
 The Sequence Diagram represents the **runtime flow of the application**, showing how different components interact with each other during various operations.
 
