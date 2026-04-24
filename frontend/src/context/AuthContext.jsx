@@ -1,0 +1,43 @@
+import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../api/axios";
+
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    const savedUser = localStorage.getItem("adminUser");
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (email, password) => {
+    const { data } = await api.post("/auth/login", { email, password });
+    if (data.user?.role !== "admin") {
+      throw new Error("Access denied. Admin accounts only.");
+    }
+    localStorage.setItem("adminToken", data.token);
+    localStorage.setItem("adminUser", JSON.stringify(data.user));
+    setUser(data.user);
+    return data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => useContext(AuthContext);
