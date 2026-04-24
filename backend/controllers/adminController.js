@@ -45,3 +45,70 @@ exports.getDashboardStats = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
+// ─── Contribution Management ───────────────────────────────────────────────
+
+exports.getPendingContributions = async (req, res) => {
+  try {
+    const contributions = await AdminService.getPendingContributions();
+    res.json(contributions);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+exports.approveContribution = async (req, res) => {
+  try {
+    const fighter = await AdminService.approveContribution(req.params.id);
+    res.json({ message: "Contribution approved successfully", fighter });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+exports.rejectContribution = async (req, res) => {
+  try {
+    const fighter = await AdminService.rejectContribution(req.params.id);
+    res.json({ message: "Contribution rejected", fighter });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+// ─── Freedom Fighters CRUD (Admin) ─────────────────────────────────────────
+
+exports.getAllFighters = async (req, res) => {
+  try {
+    const fighters = await AdminService.getAllFighters();
+    res.json(fighters);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+exports.createFighterAdmin = async (req, res) => {
+  try {
+    const fighter = await AdminService.createFighter(req.body, req.user.id);
+    res.status(201).json(fighter);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+exports.updateFighterAdmin = async (req, res) => {
+  try {
+    const fighter = await AdminService.updateFighter(req.params.id, req.body);
+    res.json(fighter);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+exports.deleteFighterAdmin = async (req, res) => {
+  try {
+    await AdminService.deleteFighterById(req.params.id);
+    res.json({ message: "Fighter deleted successfully" });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};

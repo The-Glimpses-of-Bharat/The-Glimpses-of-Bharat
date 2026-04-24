@@ -19,7 +19,10 @@ app.use(morgan("dev"));
 
 app.use(
   cors({
-    origin: ["https://the-glimpse-of-bharat-code.vercel.app"],
+    origin: [
+      "https://the-glimpse-of-bharat-code.vercel.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
   })
 );
