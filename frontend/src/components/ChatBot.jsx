@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "../api/axios";
-import { MessageSquare, Send, X, Bot, User } from "lucide-react";
+import { MessageSquare, Send, X, Bot, User, List, Info, ChevronRight } from "lucide-react";
 import "./ChatBot.css";
 
 export default function ChatBot() {
@@ -22,24 +22,60 @@ export default function ChatBot() {
     e.preventDefault();
     if (!message.trim() || isLoading) return;
 
-    const userMessage = { role: "user", content: message };
+    const userMessage = { role: "user", content: message, type: "text" };
     setChatHistory((prev) => [...prev, userMessage]);
     setMessage("");
     setIsLoading(true);
 
     try {
       const response = await axios.post("/chat/ask", { question: message });
-      const assistantMessage = { role: "assistant", content: response.data.answer };
+      const assistantMessage = { 
+        role: "assistant", 
+        content: response.data.answer,
+        type: response.data.type || "text"
+      };
       setChatHistory((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Chat Error:", error);
       setChatHistory((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, I encountered an error. Please try again." },
+        { role: "assistant", content: "Sorry, I encountered an error. Please try again.", type: "text" },
       ]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const renderMessageContent = (msg) => {
+    if (msg.type === "steps") {
+      // Split content into steps (assuming AI provides a list or numbered lines)
+      const steps = msg.content.split(/\n/).filter(line => line.trim().length > 0);
+      return (
+        <div className="steps-container">
+          <p style={{marginBottom: '10px', fontWeight: '600'}}>Directions:</p>
+          {steps.map((step, i) => (
+            <div key={i} className="step-item">
+              <div className="step-number">{i + 1}</div>
+              <div className="step-text">{step.replace(/^\d+\.\s*/, '')}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (msg.type === "info") {
+      return (
+        <div className="info-container">
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+            <Info size={16} />
+            <strong>Knowledge Architecture:</strong>
+          </div>
+          <div className="info-content">{msg.content}</div>
+        </div>
+      );
+    }
+
+    return <div>{msg.content}</div>;
   };
 
   return (
@@ -60,22 +96,22 @@ export default function ChatBot() {
           <div className="chatbot-messages">
             {chatHistory.length === 0 && (
               <div className="chat-message message-assistant">
-                Namaste! I am your AI assistant. Ask me anything about Indian Freedom Fighters!
+                Namaste! I am your AI assistant. Ask me anything about Indian Freedom Fighters or how to use this app!
               </div>
             )}
             {chatHistory.map((msg, index) => (
               <div
                 key={index}
                 className={`chat-message ${
-                  msg.role === "user" ? "message-user" : "message-assistant"
+                  msg.role === "user" ? "message-user" : `message-assistant message-${msg.type}`
                 }`}
               >
-                {msg.content}
+                {renderMessageContent(msg)}
               </div>
             ))}
             {isLoading && (
               <div className="chat-message message-assistant">
-                Thinking...
+                Analyzing request...
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -85,7 +121,7 @@ export default function ChatBot() {
             <input
               type="text"
               className="chatbot-input"
-              placeholder="Ask a question..."
+              placeholder="Ask about fighters or navigation..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />

@@ -18,7 +18,7 @@ class GeminiStrategy extends ChatStrategy {
 
     async generateResponse(query, context, appInfo) {
         if (!this.apiKey || this.apiKey === "placeholder") {
-            return `Mock Response (Gemini): ${query}`;
+            return JSON.stringify({ type: "text", content: `Mock Gemini: ${query}` });
         }
 
         try {
@@ -29,10 +29,9 @@ class GeminiStrategy extends ChatStrategy {
             const prompt = this._buildPrompt(query, context, appInfo);
             const result = await model.generateContent(prompt);
             const response = await result.response;
-            return response.text();
+            return response.text(); // AI is instructed to return JSON
         } catch (error) {
-            console.error("Gemini API Error:", error);
-            return "I'm sorry, I'm having trouble connecting to Gemini.";
+            return JSON.stringify({ type: "text", content: "Error connecting to Gemini." });
         }
     }
 
@@ -40,21 +39,19 @@ class GeminiStrategy extends ChatStrategy {
         return `
         You are the official AI Assistant for "The Glimpses of Bharat" website.
         
+        OUTPUT FORMAT: You MUST return a JSON object with two keys: "type" and "content".
+        Types: 
+        - "text": For simple conversation.
+        - "steps": For directions, how-to guides, or process steps. (Format content as a numbered list).
+        - "info": For structured historical data or architecture of the app.
+
         RULES:
-        1. DATABASE CHECK: First, check the "Database Context" below for info about freedom fighters.
-        2. FALLBACK: If the freedom fighter is NOT in the database, start your answer with: "This website doesn't have information about this freedom fighter yet, but based on my search I found..." and then provide the answer from your general knowledge.
-        3. APP KNOWLEDGE: If the user asks about the app (how to contribute, premium, navigation, map), use the "App Info" provided below.
-        4. TONE: Be respectful, patriotic, and helpful.
+        1. DATABASE CHECK: First check "Database Context".
+        2. FALLBACK: If missing in DB, start "content" with: "This website doesn't have info yet, but on web searching I found..."
+        3. APP KNOWLEDGE: Use "App Info" for navigation questions.
 
-        ---
-        DATABASE CONTEXT (Freedom Fighters):
-        ${context}
-
-        ---
-        APP INFO (Website Features):
-        ${appInfo}
-
-        ---
+        DATABASE CONTEXT: ${context}
+        APP INFO: ${appInfo}
         USER QUESTION: ${query}
         `;
     }
@@ -71,7 +68,7 @@ class GroqStrategy extends ChatStrategy {
 
     async generateResponse(query, context, appInfo) {
         if (!this.apiKey || this.apiKey === "placeholder") {
-            return `Mock Response (Groq): I see you're asking about "${query}". (Add your GROQ_API_KEY to see real answers!)`;
+            return JSON.stringify({ type: "text", content: `Mock Groq: ${query}` });
         }
 
         try {
@@ -82,33 +79,25 @@ class GroqStrategy extends ChatStrategy {
                 messages: [
                     {
                         role: "system",
-                        content: `You are the official AI Assistant for "The Glimpses of Bharat" website.
+                        content: `You are the AI Assistant for "The Glimpses of Bharat".
+                        OUTPUT FORMAT: Return ONLY a valid JSON object: {"type": "text|steps|info", "content": "string"}.
                         
-                        RULES:
-                        1. DATABASE CHECK: First, check the "Database Context" for info about freedom fighters.
-                        2. FALLBACK: If the freedom fighter is NOT in the database, start your answer with: "This website doesn't have information about this freedom fighter yet, but based on my search I found..." and then provide the answer from your knowledge.
-                        3. APP KNOWLEDGE: If the user asks about the app (how to contribute, premium, navigation, map), use the "App Info" provided.
-                        
-                        ---
-                        DATABASE CONTEXT:
-                        ${context}
+                        - "steps": Use for directions or processes (e.g., how to contribute).
+                        - "info": Use for structured history or app architecture.
+                        - "text": For everything else.
 
-                        ---
-                        APP INFO:
-                        ${appInfo}`
+                        DATABASE: ${context}
+                        APP INFO: ${appInfo}`
                     },
-                    {
-                        role: "user",
-                        content: query
-                    }
+                    { role: "user", content: query }
                 ],
                 model: "llama-3.3-70b-versatile",
+                response_format: { type: "json_object" }
             });
 
-            return completion.choices[0]?.message?.content || "No response generated.";
+            return completion.choices[0]?.message?.content || JSON.stringify({type:"text", content: "No response."});
         } catch (error) {
-            console.error("Groq API Error:", error);
-            return "I'm sorry, I'm having trouble connecting to Groq.";
+            return JSON.stringify({ type: "text", content: "Error connecting to Groq." });
         }
     }
 }

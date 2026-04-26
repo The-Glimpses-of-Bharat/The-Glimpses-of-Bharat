@@ -18,19 +18,27 @@ exports.askQuestion = async (req, res) => {
     });
     await userMessage.save();
 
-    // 2. Get AI response
-    const aiResponse = await chatService.processUserQuery(question);
+    // 2. Get AI response (now a JSON string with type and content)
+    const rawAiResponse = await chatService.processUserQuery(question);
+    
+    let aiData;
+    try {
+        aiData = JSON.parse(rawAiResponse);
+    } catch (e) {
+        aiData = { type: "text", content: rawAiResponse };
+    }
 
-    // 3. Save AI's response to DB
+    // 3. Save AI's response to DB (save the content part)
     const assistantMessage = new ChatMessage({
       user: userId,
       role: "assistant",
-      content: aiResponse,
+      content: aiData.content,
     });
     await assistantMessage.save();
 
     res.status(200).json({ 
-      answer: aiResponse,
+      answer: aiData.content,
+      type: aiData.type,
       history: [userMessage, assistantMessage]
     });
   } catch (error) {

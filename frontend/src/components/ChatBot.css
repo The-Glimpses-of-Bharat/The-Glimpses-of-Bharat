@@ -100,6 +100,39 @@
   border: 1px solid var(--border);
 }
 
+.message-steps {
+  background: linear-gradient(145deg, var(--bg-card), var(--bg-3));
+  border-left: 3px solid var(--accent) !important;
+  padding: 16px !important;
+}
+
+.message-info {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent) !important;
+  color: var(--text-primary) !important;
+  font-weight: 500;
+}
+
+.step-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.step-number {
+  width: 20px;
+  height: 20px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
 .chatbot-input-area {
   padding: 16px;
   background: var(--bg-2);
