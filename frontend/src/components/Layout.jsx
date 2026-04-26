@@ -22,7 +22,7 @@ export default function Layout({ children }) {
 
   const getNavItems = (role) => {
     const items = [
-      { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
       { to: "/profile", icon: UserCircle, label: "My Profile" }
     ];
     if (role === "admin" || role === "contributor") {
@@ -71,7 +71,7 @@ export default function Layout({ children }) {
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end={to === "/dashboard"}
               className={({ isActive }) =>
                 `nav-item ${isActive ? "active" : ""}`
               }

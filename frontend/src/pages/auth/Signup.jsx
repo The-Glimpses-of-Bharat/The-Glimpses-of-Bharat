@@ -30,7 +30,7 @@ export default function Signup() {
       await signup(formData);
       // After successful signup, immediately log them in
       await login(formData.email, formData.password);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Signup failed");
     } finally {

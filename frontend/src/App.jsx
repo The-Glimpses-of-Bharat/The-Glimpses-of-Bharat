@@ -5,6 +5,8 @@ import Layout from "./components/Layout";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import Explore from "./pages/Explore";
 import Contributions from "./pages/Contributions";
 import Fighters from "./pages/Fighters";
 import Users from "./pages/Users";
@@ -14,14 +16,15 @@ function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-full"><div className="spinner" /></div>;
   if (!user) return <Navigate to="/login" replace />;
-  if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/" replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/dashboard" replace />;
   return <Layout>{children}</Layout>;
 }
 
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-full"><div className="spinner" /></div>;
-  if (user) return <Navigate to="/" replace />;
+  // If user is already logged in, redirect them to dashboard
+  if (user) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -30,6 +33,14 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route
+            path="/"
+            element={<Home />} // Public landing page
+          />
+          <Route
+            path="/explore"
+            element={<Explore />} // Public all-fighters search page
+          />
           <Route
             path="/login"
             element={
@@ -47,7 +58,7 @@ export default function App() {
             }
           />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
