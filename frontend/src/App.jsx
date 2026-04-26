@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Contributions from "./pages/Contributions";
+import ContributorPortal from "./pages/ContributorPortal";
 import Fighters from "./pages/Fighters";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
@@ -78,6 +79,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={["admin", "contributor"]}>
                 <Contributions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contribute"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "contributor"]}>
+                <ContributorPortal />
               </ProtectedRoute>
             }
           />

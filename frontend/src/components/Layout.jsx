@@ -11,7 +11,8 @@ import {
   X,
   ChevronRight,
   Shield,
-  UserCircle
+  UserCircle,
+  PenLine
 } from "lucide-react";
 import ChatBot from "./ChatBot";
 
@@ -26,6 +27,7 @@ export default function Layout({ children }) {
       { to: "/profile", icon: UserCircle, label: "My Profile" }
     ];
     if (role === "admin" || role === "contributor") {
+      items.push({ to: "/contribute", icon: PenLine, label: "Contributor Portal" });
       items.push({ to: "/contributions", icon: Clock, label: "Contributions" });
     }
     if (role === "admin") {
@@ -91,7 +93,7 @@ export default function Layout({ children }) {
               </div>
               <div className="user-details">
                 <span className="user-name">{user?.name || "User"}</span>
-                <span className="user-role" style={{textTransform: "capitalize"}}>{user?.role || "user"}</span>
+                <span className="user-role" style={{ textTransform: "capitalize" }}>{user?.role || "user"}</span>
               </div>
             </div>
           )}
@@ -111,7 +113,7 @@ export default function Layout({ children }) {
       <main className="main-content">
         <div className="topbar">
           <div className="topbar-breadcrumb">
-            <span style={{textTransform: "capitalize"}}>{user?.role || "Dashboard"}</span>
+            <span style={{ textTransform: "capitalize" }}>{user?.role || "Dashboard"}</span>
           </div>
           <div className="topbar-user">
             <div className="user-chip">
