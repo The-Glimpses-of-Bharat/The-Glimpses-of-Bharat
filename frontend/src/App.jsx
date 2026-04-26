@@ -2,16 +2,19 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
 import Contributions from "./pages/Contributions";
 import Fighters from "./pages/Fighters";
 import Users from "./pages/Users";
+import Profile from "./pages/Profile";
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-full"><div className="spinner" /></div>;
   if (!user) return <Navigate to="/login" replace />;
+  if (allowedRoles && !allowedRoles.includes(user.role)) return <Navigate to="/" replace />;
   return <Layout>{children}</Layout>;
 }
 
@@ -36,6 +39,14 @@ export default function App() {
             }
           />
           <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <Signup />
+              </PublicRoute>
+            }
+          />
+          <Route
             path="/"
             element={
               <ProtectedRoute>
@@ -44,9 +55,17 @@ export default function App() {
             }
           />
           <Route
-            path="/contributions"
+            path="/profile"
             element={
               <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contributions"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "contributor"]}>
                 <Contributions />
               </ProtectedRoute>
             }
@@ -54,7 +73,7 @@ export default function App() {
           <Route
             path="/fighters"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <Fighters />
               </ProtectedRoute>
             }
@@ -62,7 +81,7 @@ export default function App() {
           <Route
             path="/users"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <Users />
               </ProtectedRoute>
             }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import { Shield, Eye, EyeOff, Loader } from "lucide-react";
 
 export default function Login() {
@@ -28,12 +28,13 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
+      <div className="patriotic-overlay"></div>
+      <div className="login-card patriotic-card">
         <div className="login-header">
-          <div className="login-icon">
+          <div className="login-icon patriotic-icon">
             <Shield size={32} />
           </div>
-          <h1>Admin Portal</h1>
+          <h1 className="patriotic-title">Welcome Back</h1>
           <p>The Glimpses of Bharat</p>
         </div>
 
@@ -47,7 +48,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@example.com"
+              placeholder="user@bharat.com"
               required
               autoComplete="email"
             />
@@ -76,9 +77,13 @@ export default function Login() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+          <button type="submit" className="btn btn-primary btn-full patriotic-btn" disabled={loading}>
             {loading ? <><Loader size={16} className="spin" /> Signing in...</> : "Sign In"}
           </button>
+          
+          <div className="auth-footer">
+            Don't have an account? <Link to="/signup">Join the Movement</Link>
+          </div>
         </form>
       </div>
     </div>

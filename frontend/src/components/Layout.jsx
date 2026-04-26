@@ -11,20 +11,31 @@ import {
   X,
   ChevronRight,
   Shield,
+  UserCircle
 } from "lucide-react";
 import ChatBot from "./ChatBot";
-
-const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/contributions", icon: Clock, label: "Pending Contributions" },
-  { to: "/fighters", icon: Sword, label: "Freedom Fighters" },
-  { to: "/users", icon: Users, label: "User Management" },
-];
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const getNavItems = (role) => {
+    const items = [
+      { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/profile", icon: UserCircle, label: "My Profile" }
+    ];
+    if (role === "admin" || role === "contributor") {
+      items.push({ to: "/contributions", icon: Clock, label: "Contributions" });
+    }
+    if (role === "admin") {
+      items.push({ to: "/fighters", icon: Sword, label: "Freedom Fighters" });
+      items.push({ to: "/users", icon: Users, label: "User Management" });
+    }
+    return items;
+  };
+
+  const currentNavItems = getNavItems(user?.role);
 
   const handleLogout = () => {
     logout();
@@ -38,7 +49,7 @@ export default function Layout({ children }) {
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <Shield size={24} />
-            {sidebarOpen && <span>Admin Panel</span>}
+            {sidebarOpen && <span>Glimpses of Bharat</span>}
           </div>
           <button
             className="sidebar-toggle"
@@ -56,7 +67,7 @@ export default function Layout({ children }) {
         )}
 
         <nav className="sidebar-nav">
-          {navItems.map(({ to, icon: Icon, label }) => (
+          {currentNavItems.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
@@ -79,8 +90,8 @@ export default function Layout({ children }) {
                 {user?.name?.charAt(0)?.toUpperCase() || "A"}
               </div>
               <div className="user-details">
-                <span className="user-name">{user?.name || "Admin"}</span>
-                <span className="user-role">Administrator</span>
+                <span className="user-name">{user?.name || "User"}</span>
+                <span className="user-role" style={{textTransform: "capitalize"}}>{user?.role || "user"}</span>
               </div>
             </div>
           )}
@@ -100,14 +111,14 @@ export default function Layout({ children }) {
       <main className="main-content">
         <div className="topbar">
           <div className="topbar-breadcrumb">
-            <span>Admin</span>
+            <span style={{textTransform: "capitalize"}}>{user?.role || "Dashboard"}</span>
           </div>
           <div className="topbar-user">
             <div className="user-chip">
               <div className="chip-avatar">
-                {user?.name?.charAt(0)?.toUpperCase() || "A"}
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
-              <span>{user?.name || "Admin"}</span>
+              <span>{user?.name || "User"}</span>
             </div>
           </div>
         </div>
