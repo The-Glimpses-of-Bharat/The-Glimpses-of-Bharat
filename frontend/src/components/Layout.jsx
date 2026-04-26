@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Shield,
 } from "lucide-react";
+import ChatBot from "./ChatBot";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
@@ -112,6 +113,7 @@ export default function Layout({ children }) {
         </div>
         <div className="page-content">{children}</div>
       </main>
+      <ChatBot />
     </div>
   );
 }

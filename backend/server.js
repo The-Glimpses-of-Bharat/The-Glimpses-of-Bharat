@@ -36,6 +36,7 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/fighters", require("./routes/fighterRoutes"));
 app.use("/api/contributions", require("./routes/contributionRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/chat", require("./routes/chatRoutes"));
 // Health check route
 app.get("/", (req, res) => {
   res.send("Glimpse of Bharat API running...");
