@@ -8,7 +8,7 @@ export default function SubscriptionDetails() {
 
   const handleShare = (platform) => {
     const text = "I just upgraded to Premium on The Glimpses of Bharat to access exclusive historical archives! Join me in exploring our rich history. #GlimpsesOfBharat #History";
-    const url = "http://localhost:5175";
+    const url = window.location.origin;
     
     if (platform === "twitter") {
       window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");

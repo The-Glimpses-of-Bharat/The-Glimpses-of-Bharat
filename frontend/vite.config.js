@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Proxy /api calls to the backend during development
+      // Proxy /api calls to the local backend during development
       '/api': {
-        target: import.meta.env.VITE_API_URL,
+        target: 'http://localhost:4000',
         changeOrigin: true,
         secure: false,
       },
