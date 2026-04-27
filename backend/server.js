@@ -22,7 +22,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = [
+      const allowedOrigins = ["https://the-glimpses-of-bharat-sdse-git-main-rudra-choudharys-projects.vercel.app/"
         "https://the-glimpse-of-bharat-code.vercel.app",
         "https://the-glimpses-of-bharat-sdse.vercel.app",
         "http://localhost:5173",
