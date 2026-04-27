@@ -12,7 +12,11 @@ import {
   ChevronRight,
   Shield,
   UserCircle,
-  PenLine
+  PenLine,
+  Brain,
+  Trophy,
+  MapPin,
+  BarChart3
 } from "lucide-react";
 import ChatBot from "./ChatBot";
 
@@ -24,7 +28,11 @@ export default function Layout({ children }) {
   const getNavItems = (role) => {
     const items = [
       { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-      { to: "/profile", icon: UserCircle, label: "My Profile" }
+      { to: "/profile", icon: UserCircle, label: "My Profile" },
+      { to: "/quiz", icon: Brain, label: "Quiz" },
+      { to: "/leaderboard", icon: Trophy, label: "Leaderboard" },
+      { to: "/map", icon: MapPin, label: "Heritage Map" },
+      { to: "/analytics", icon: BarChart3, label: "Analytics" }
     ];
     if (role === "admin" || role === "contributor") {
       items.push({ to: "/contribute", icon: PenLine, label: "Contributor Portal" });

@@ -12,6 +12,10 @@ import ContributorPortal from "./pages/ContributorPortal";
 import Fighters from "./pages/Fighters";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
+import Quiz from "./pages/Quiz";
+import Leaderboard from "./pages/Leaderboard";
+import MapView from "./pages/MapView";
+import Analytics from "./pages/Analytics";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
@@ -103,6 +107,38 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quiz"
+            element={
+              <ProtectedRoute>
+                <Quiz />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <MapView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
               </ProtectedRoute>
             }
           />

@@ -11,8 +11,10 @@ dotenv.config();
 // Initialize app
 const app = express();
 
-// Connect to DB
-connectDB();
+// Connect to DB (non-fatal — quiz/trivia/locations work without DB)
+connectDB().catch((err) => {
+  console.warn("⚠️  MongoDB not connected. DB-dependent routes won't work, but quiz/trivia/locations will.");
+});
 
 // Middleware
 app.use(morgan("dev"));
@@ -37,6 +39,7 @@ app.use("/api/fighters", require("./routes/fighterRoutes"));
 app.use("/api/contributions", require("./routes/contributionRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
+app.use("/api/quiz", require("./routes/quizRoutes"));
 // Health check route
 app.get("/", (req, res) => {
   res.send("Glimpse of Bharat API running...");
