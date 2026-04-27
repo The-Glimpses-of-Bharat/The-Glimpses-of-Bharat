@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       // Proxy /api calls to the backend during development
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'import.meta.env.VITE_API_URL',
         changeOrigin: true,
         secure: false,
       },
