@@ -14,6 +14,7 @@ const {
   getAllSuggestions,
   getMySuggestions,
   updateSuggestionStatus,
+  deleteSuggestion,
 } = require("../controllers/contributionController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -53,5 +54,8 @@ router.get("/suggestions", protect, authorize("admin"), getAllSuggestions);
 
 // Admin: Approve/Reject an edit suggestion
 router.patch("/suggestions/:id/status", protect, authorize("admin"), updateSuggestionStatus);
+
+// Admin: Delete a suggestion record
+router.delete("/suggestions/:id", protect, authorize("admin"), deleteSuggestion);
 
 module.exports = router;

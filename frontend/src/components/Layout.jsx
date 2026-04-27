@@ -38,7 +38,9 @@ export default function Layout({ children }) {
       { to: "/analytics", icon: BarChart3, label: "Analytics" },
       { to: "/profile", icon: UserCircle, label: "My Profile" }
     ];
-    items.push({ to: "/contribute", icon: PenLine, label: "Suggestion Portal" });
+    if (role !== "admin") {
+      items.push({ to: "/contribute", icon: PenLine, label: "Suggestion Portal" });
+    }
     if (role === "admin" || role === "contributor") {
       items.push({ to: "/contributions", icon: Clock, label: "Contributions" });
     }

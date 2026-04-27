@@ -208,6 +208,20 @@ exports.updateSuggestionStatus = async (req, res) => {
   }
 };
 
+// DELETE /contribute/suggestions/:id — for admin to remove record
+exports.deleteSuggestion = async (req, res) => {
+  try {
+    const suggestion = await Contribution.findById(req.params.id);
+    if (!suggestion) {
+      return res.status(404).json({ message: "Suggestion not found" });
+    }
+    await suggestion.deleteOne();
+    res.json({ message: "Suggestion deleted permanently" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // GET /contribute/my-suggestions — for users to track their suggested edits
 exports.getMySuggestions = async (req, res) => {
   try {
