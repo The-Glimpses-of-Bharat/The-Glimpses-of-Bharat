@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react"; // HMR trigger
 import {
   Chart as ChartJS,
   CategoryScale,

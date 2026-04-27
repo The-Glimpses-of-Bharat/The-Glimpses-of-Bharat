@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import api from "../api/axios";
 import {
     Plus, X, Edit2, Send, Clock, CheckCircle, XCircle,
-    RefreshCw, User, Calendar, FileText, ChevronDown,
+    RefreshCw, Calendar, FileText, Trash2, History, Shield, MessageSquarePlus
 } from "lucide-react";
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -24,6 +24,16 @@ function StatusBadge({ status }) {
             <m.Icon size={11} /> {m.label}
         </span>
     );
+}
+
+function timeAgo(dateStr) {
+    if (!dateStr) return null;
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
+    return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function validate(form) {
@@ -150,7 +160,11 @@ function ContributionModal({ entry, onClose, onSaved }) {
                             Cancel
                         </button>
                         <button type="submit" className="btn btn-primary" id="cp-submit-btn" disabled={saving}>
-                            {saving ? <><RefreshCw size={14} className="spin" /> Saving…</> : isEdit ? <><Edit2 size={14} /> Update</> : <><Send size={14} /> Submit</>}
+                            {saving
+                                ? <><RefreshCw size={14} className="spin" /> Saving…</>
+                                : isEdit
+                                    ? <><Edit2 size={14} /> Update</>
+                                    : <><Send size={14} /> Submit</>}
                         </button>
                     </div>
                 </form>
@@ -162,83 +176,139 @@ function ContributionModal({ entry, onClose, onSaved }) {
 /* ── Main page ───────────────────────────────────────── */
 export default function ContributorPortal() {
     const [submissions, setSubmissions] = useState([]);
+    const [suggestions, setSuggestions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("entries"); // "entries" | "suggestions"
     const [error, setError] = useState("");
-    const [modalEntry, setModalEntry] = useState(undefined); // undefined = closed, null = new, object = editing
+    const [modalEntry, setModalEntry] = useState(undefined); // undefined=closed, null=new, object=editing
     const [toast, setToast] = useState(null);
     const [filter, setFilter] = useState("all");
+    const [deletingId, setDeletingId] = useState(null);
 
     const showToast = (msg, type = "success") => {
         setToast({ msg, type });
         setTimeout(() => setToast(null), 3200);
     };
 
-    const fetchSubmissions = useCallback(async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         setError("");
         try {
-            const { data } = await api.get("/contributions/my");
-            setSubmissions(data);
+            const [entriesRes, suggestionsRes] = await Promise.all([
+                api.get("/contributions/my"),
+                api.get("/contributions/my-suggestions")
+            ]);
+            setSubmissions(entriesRes.data);
+            setSuggestions(suggestionsRes.data);
+
+            // Auto-switch to suggestions tab if entries are empty but suggestions exist
+            if (entriesRes.data.length === 0 && suggestionsRes.data.length > 0) {
+                setActiveTab("suggestions");
+            }
         } catch (err) {
-            setError(err.response?.data?.message || "Failed to load your submissions.");
+            setError(err.response?.data?.message || "Failed to load contribution data.");
         } finally {
             setLoading(false);
         }
     }, []);
 
-    useEffect(() => { fetchSubmissions(); }, [fetchSubmissions]);
+    useEffect(() => { fetchData(); }, [fetchData]);
 
     const handleSaved = (savedEntry, mode) => {
         if (mode === "create") {
             setSubmissions((prev) => [savedEntry, ...prev]);
-            showToast("Submission received! It will be reviewed by an admin.", "success");
         } else {
             setSubmissions((prev) => prev.map((e) => e._id === savedEntry._id ? savedEntry : e));
-            showToast("Submission updated successfully.", "success");
         }
     };
 
-    const filtered = filter === "all" ? submissions : submissions.filter((s) => s.status === filter);
+    const handleDelete = async (entry) => {
+        if (!window.confirm(`Withdraw "${entry.name}"? This cannot be undone.`)) return;
+        setDeletingId(entry._id);
+        try {
+            await api.delete(`/contributions/${entry._id}`);
+            setSubmissions((prev) => prev.filter((s) => s._id !== entry._id));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setDeletingId(null);
+        }
+    };
 
-    const counts = submissions.reduce((acc, s) => {
+    const filteredEntries = filter === "all" ? submissions : submissions.filter((s) => s.status === filter);
+    const filteredSuggestions = filter === "all" ? suggestions : suggestions.filter((s) => s.status === filter);
+
+    const getCounts = (data) => data.reduce((acc, s) => {
         acc[s.status] = (acc[s.status] || 0) + 1;
         return acc;
     }, {});
 
+    const currentCounts = activeTab === "entries" ? getCounts(submissions) : getCounts(suggestions);
+    const currentListSize = activeTab === "entries" ? submissions.length : suggestions.length;
+
     return (
-        <div className="page">
-            {/* Toast */}
+        <div className="page" style={{ paddingBottom: "60px" }}>
             {toast && <div className={`toast toast--${toast.type}`}>{toast.msg}</div>}
 
-            {/* Header */}
             <div className="page-header">
                 <div>
-                    <h1 className="page-title">Contributor Portal</h1>
-                    <p className="page-subtitle">Propose and manage your Freedom Fighter entries</p>
+                    <h1 className="page-title">Suggestion Portal</h1>
+                    <p className="page-subtitle">Track your entries and suggestions for Freedom Fighters</p>
                 </div>
                 <div className="header-actions">
-                    <button className="btn btn-secondary" onClick={fetchSubmissions} disabled={loading} id="cp-refresh-btn">
+                    <button className="btn btn-secondary" onClick={fetchData} disabled={loading}>
                         <RefreshCw size={15} className={loading ? "spin" : ""} /> Refresh
                     </button>
-                    <button className="btn btn-primary" onClick={() => setModalEntry(null)} id="cp-new-btn">
-                        <Plus size={15} /> Propose Entry
+                    <button className="btn btn-primary" onClick={() => setModalEntry(null)}>
+                        <Plus size={15} /> New Entry
                     </button>
                 </div>
             </div>
 
-            {/* Stats strip */}
+            {/* Tab Navigation */}
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', borderBottom: '1px solid var(--border)' }}>
+                <button
+                    onClick={() => setActiveTab("entries")}
+                    style={{
+                        padding: '12px 20px',
+                        background: 'none',
+                        border: 'none',
+                        color: activeTab === 'entries' ? 'var(--accent)' : 'var(--text-secondary)',
+                        borderBottom: activeTab === 'entries' ? '2px solid var(--accent)' : '2px solid transparent',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                    }}
+                >
+                    Proposed Entries ({submissions.length})
+                </button>
+                <button
+                    onClick={() => setActiveTab("suggestions")}
+                    style={{
+                        padding: '12px 20px',
+                        background: 'none',
+                        border: 'none',
+                        color: activeTab === 'suggestions' ? 'var(--accent)' : 'var(--text-secondary)',
+                        borderBottom: activeTab === 'suggestions' ? '2px solid var(--accent)' : '2px solid transparent',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                    }}
+                >
+                    Edit Suggestions ({suggestions.length})
+                </button>
+            </div>
+
+            {/* Stats filter strip */}
             <div className="cp-stats-strip">
                 {[
-                    { key: "all", label: "Total", count: submissions.length, color: "blue" },
-                    { key: "pending", label: "Pending", count: counts.pending || 0, color: "yellow" },
-                    { key: "approved", label: "Approved", count: counts.approved || 0, color: "green" },
-                    { key: "rejected", label: "Rejected", count: counts.rejected || 0, color: "red" },
+                    { key: "all", label: "Total", count: currentListSize, color: "blue" },
+                    { key: "pending", label: "Pending", count: currentCounts.pending || 0, color: "yellow" },
+                    { key: "approved", label: "Approved", count: currentCounts.approved || 0, color: "green" },
+                    { key: "rejected", label: "Rejected", count: currentCounts.rejected || 0, color: "red" },
                 ].map(({ key, label, count, color }) => (
                     <button
                         key={key}
                         className={`cp-stat-pill ${filter === key ? "cp-stat-pill--active cp-stat-pill--" + color : ""}`}
                         onClick={() => setFilter(key)}
-                        id={`cp-filter-${key}`}
                     >
                         <span className={`cp-stat-num cp-stat-num--${color}`}>{count}</span>
                         <span className="cp-stat-label">{label}</span>
@@ -246,92 +316,101 @@ export default function ContributorPortal() {
                 ))}
             </div>
 
-            {error && <div className="alert alert-error" style={{ marginBottom: 16 }}>{error}</div>}
+            {/* Error alerts removed as requested */}
 
-            {/* Content */}
             {loading ? (
                 <div className="loading-state">
                     <div className="spinner" />
-                    <p>Loading your submissions…</p>
+                    <p>Loading...</p>
                 </div>
-            ) : filtered.length === 0 ? (
-                <div className="empty-state" style={{ marginTop: 48 }}>
+            ) : (activeTab === "entries" ? filteredEntries : filteredSuggestions).length === 0 ? (
+                <div className="empty-state">
                     <FileText size={48} />
-                    <h3>{filter === "all" ? "No submissions yet" : `No ${filter} submissions`}</h3>
-                    <p>
-                        {filter === "all"
-                            ? "Click \"Propose Entry\" to contribute a Freedom Fighter to the archive."
-                            : `You have no ${filter} entries right now.`}
-                    </p>
-                    {filter === "all" && (
-                        <button className="btn btn-primary" onClick={() => setModalEntry(null)} style={{ marginTop: 16 }}>
-                            <Plus size={15} /> Propose your first entry
-                        </button>
-                    )}
+                    <h3>No items found</h3>
+                    <p>You haven't made any {filter === 'all' ? '' : filter} {activeTab === 'entries' ? 'entries' : 'suggestions'} yet.</p>
                 </div>
             ) : (
-                <>
-                    <div className="table-meta">
-                        <span className="badge badge-yellow">{filtered.length} {filter === "all" ? "total" : filter}</span>
-                    </div>
-                    <div className="table-wrapper">
-                        <table className="data-table">
-                            <thead>
+                <div className="table-wrapper">
+                    <table className="data-table">
+                        <thead>
+                            {activeTab === "entries" ? (
                                 <tr>
                                     <th>Freedom Fighter</th>
                                     <th>Years</th>
                                     <th>Description</th>
+                                    <th>Submitted</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {filtered.map((entry) => (
+                            ) : (
+                                <tr>
+                                    <th>Fighter</th>
+                                    <th>Your Suggestion</th>
+                                    <th>Submitted</th>
+                                    <th>Status / Feedback</th>
+                                </tr>
+                            )}
+                        </thead>
+                        <tbody>
+                            {activeTab === "entries" ? (
+                                filteredEntries.map((entry) => (
                                     <tr key={entry._id}>
                                         <td>
                                             <div className="fighter-cell">
-                                                <div className="fighter-avatar">
-                                                    {entry.name?.charAt(0)?.toUpperCase()}
-                                                </div>
+                                                <div className="fighter-avatar">{entry.name?.charAt(0)?.toUpperCase()}</div>
                                                 <span className="fighter-name">{entry.name}</span>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div className="years-cell">
-                                                <Calendar size={13} />
-                                                {entry.birthYear || "?"} – {entry.deathYear || "?"}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-clamp">{entry.description || "—"}</span>
-                                        </td>
+                                        <td>{entry.birthYear || "?"} – {entry.deathYear || "?"}</td>
+                                        <td><span className="text-clamp">{entry.description || "—"}</span></td>
+                                        <td>{timeAgo(entry.createdAt)}</td>
                                         <td><StatusBadge status={entry.status} /></td>
                                         <td>
                                             <div className="action-buttons">
-                                                {entry.status === "pending" ? (
-                                                    <button
-                                                        className="btn btn-secondary btn-sm"
-                                                        onClick={() => setModalEntry(entry)}
-                                                        id={`cp-edit-${entry._id}`}
-                                                    >
-                                                        <Edit2 size={13} /> Edit
+                                                {entry.status === "pending" && (
+                                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(entry)}>
+                                                        <Trash2 size={13} />
                                                     </button>
-                                                ) : (
-                                                    <span className="text-muted" style={{ fontSize: 12 }}>
-                                                        {entry.status === "approved" ? "✅ Published" : "❌ Cannot edit"}
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                filteredSuggestions.map((s) => (
+                                    <tr key={s._id}>
+                                        <td>
+                                            <div className="fighter-cell">
+                                                <div className="fighter-avatar">
+                                                    {s.fighter?.image ? <img src={s.fighter.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : s.fighter?.name?.charAt(0)}
+                                                </div>
+                                                <span className="fighter-name">{s.fighter?.name}</span>
+                                            </div>
+                                        </td>
+                                        <td style={{ maxWidth: '300px' }}>
+                                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+                                                "{s.suggestion}"
+                                            </div>
+                                        </td>
+                                        <td>{timeAgo(s.createdAt)}</td>
+                                        <td>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                <StatusBadge status={s.status} />
+                                                {s.adminFeedback && (
+                                                    <span style={{ fontSize: '11px', color: 'var(--accent)' }}>
+                                                        {s.adminFeedback}
                                                     </span>
                                                 )}
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
-            {/* Modal */}
             {modalEntry !== undefined && (
                 <ContributionModal
                     entry={modalEntry}

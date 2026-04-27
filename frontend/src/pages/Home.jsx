@@ -65,10 +65,10 @@ export default function Home() {
           ) : (
             <div className="fighters-grid">
               {fighters.map(fighter => (
-                <div key={fighter._id} className="fighter-card">
+                <Link to={`/fighter/${fighter._id}`} key={fighter._id} className="fighter-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                   {fighter.image ? (
-                    <div className="fighter-image-wrapper" style={{height: '160px', overflow: 'hidden'}}>
-                      <img src={fighter.image} alt={fighter.name} style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top'}} />
+                    <div className="fighter-image-wrapper" style={{ height: '160px', overflow: 'hidden' }}>
+                      <img src={fighter.image} alt={fighter.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                     </div>
                   ) : (
                     <div className="fighter-image-placeholder">
@@ -80,13 +80,13 @@ export default function Home() {
                     <p className="fighter-years">{fighter.birthYear} - {fighter.deathYear}</p>
                     <p className="fighter-desc">{fighter.description}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </div>
       </section>
-      
+
       <footer className="home-footer">
         <div className="container">
           <p>&copy; {new Date().getFullYear()} The Glimpses of Bharat. All rights reserved.</p>

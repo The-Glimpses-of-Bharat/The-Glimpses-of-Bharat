@@ -34,8 +34,8 @@ export default function Layout({ children }) {
       { to: "/map", icon: MapPin, label: "Heritage Map" },
       { to: "/analytics", icon: BarChart3, label: "Analytics" }
     ];
+    items.push({ to: "/contribute", icon: PenLine, label: "Suggestion Portal" });
     if (role === "admin" || role === "contributor") {
-      items.push({ to: "/contribute", icon: PenLine, label: "Contributor Portal" });
       items.push({ to: "/contributions", icon: Clock, label: "Contributions" });
     }
     if (role === "admin") {
