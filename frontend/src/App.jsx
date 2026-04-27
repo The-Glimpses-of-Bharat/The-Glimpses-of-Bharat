@@ -4,9 +4,13 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
+import ResearchPortal from "./pages/ResearchPortal";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import SubscriptionDetails from "./pages/dashboards/SubscriptionDetails";
 import Contributions from "./pages/Contributions";
 import ContributorPortal from "./pages/ContributorPortal";
 import Fighters from "./pages/Fighters";
@@ -64,10 +68,42 @@ export default function App() {
             }
           />
           <Route
+            path="/forgot-password"
+            element={
+              <PublicRoute>
+                <ForgotPassword />
+              </PublicRoute>
+            }
+          />
+          <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/research"
+            element={
+              <ProtectedRoute>
+                <ResearchPortal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment/success"
+            element={
+              <ProtectedRoute>
+                <PaymentSuccess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subscription"
+            element={
+              <ProtectedRoute>
+                <SubscriptionDetails />
               </ProtectedRoute>
             }
           />

@@ -97,3 +97,73 @@ exports.rejectFighter = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+const Fighter = require("../models/Fighter");
+const User = require("../models/User");
+
+// READ FIGHTER (Increments view count and adds to history)
+exports.readFighter = async (req, res) => {
+  try {
+    const fighterId = req.params.id;
+    const fighter = await Fighter.findById(fighterId);
+    if (!fighter) return res.status(404).json({ message: "Not found" });
+
+    fighter.views = (fighter.views || 0) + 1;
+    await fighter.save();
+
+    if (req.user) {
+      const user = await User.findById(req.user._id);
+      if (user && !user.studyHistory.includes(fighterId)) {
+        user.studyHistory.push(fighterId);
+        await user.save();
+      }
+    }
+
+    res.json(fighter);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// TOGGLE LIKE
+exports.likeFighter = async (req, res) => {
+  try {
+    const fighterId = req.params.id;
+    const fighter = await Fighter.findById(fighterId);
+    if (!fighter) return res.status(404).json({ message: "Not found" });
+
+    const userId = req.user._id;
+    const index = fighter.likes.indexOf(userId);
+    
+    if (index === -1) {
+      fighter.likes.push(userId);
+    } else {
+      fighter.likes.splice(index, 1);
+    }
+
+    await fighter.save();
+    res.json(fighter);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// TOGGLE WATCH LATER
+exports.toggleWatchLater = async (req, res) => {
+  try {
+    const fighterId = req.params.id;
+    const user = await User.findById(req.user._id);
+    
+    const index = user.watchLater.indexOf(fighterId);
+    if (index === -1) {
+      user.watchLater.push(fighterId);
+    } else {
+      user.watchLater.splice(index, 1);
+    }
+
+    await user.save();
+    res.json(user.watchLater);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

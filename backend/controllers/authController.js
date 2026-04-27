@@ -41,3 +41,22 @@ exports.getMe = async (req, res) => {
     res.status(400).json({ message: error.message || "Failed to fetch user data" });
   }
 };
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      return res.status(404).json({ message: "No account found with that email address." });
+    }
+
+    // Since we have a pre-save hook that hashes the password, we just set the raw password
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: "Password has been successfully reset." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to reset password." });
+  }
+};

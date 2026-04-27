@@ -1,10 +1,45 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { User, Shield, Search, Crown } from "lucide-react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, Crown, Loader, ArrowRight } from "lucide-react";
+import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 
 export default function UserDashboard() {
-  const { user } = useAuth();
+  const { user, fetchMe } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handlePayment = async () => {
+    // Open the official Stripe Payment Link in a new tab
+    const stripeLink = "https://buy.stripe.com/test_8x24gyeTl1jj3X3gOCebu00";
+    window.open(stripeLink, "_blank");
+
+    // Since we don't have Stripe webhooks configured locally, 
+    // we use a confirm dialog to simulate the webhook verification after they pay.
+    setTimeout(async () => {
+      const isPaid = window.confirm("Did you successfully complete the payment on Stripe?");
+      if (isPaid) {
+        setLoading(true);
+        try {
+          const verifyRes = await api.post("/payment/verify", {
+            session_id: "mock_session_" + Date.now(),
+            is_mock_payment: true
+          });
+
+          if (verifyRes.data.token) {
+            localStorage.setItem("token", verifyRes.data.token);
+          }
+          alert("Payment verified! " + verifyRes.data.message);
+          await fetchMe();
+        } catch (err) {
+          console.error(err);
+          alert("Failed to verify payment.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    }, 1000);
+  };
 
   return (
     <div className="page">
@@ -26,15 +61,34 @@ export default function UserDashboard() {
           <Link to="/explore" className="btn btn-primary">Go to Explore</Link>
         </div>
 
-        <div style={{background: 'linear-gradient(135deg, var(--bg-card), var(--accent-dim))', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent)'}}>
-          <Crown size={32} style={{color: 'var(--yellow)', marginBottom: '16px'}}/>
-          <h2 style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '8px'}}>Upgrade to Premium</h2>
-          <p style={{color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5'}}>
-            Get exclusive access to premium content, research journals, and advanced materials about India's freedom struggle.
-          </p>
-          {/* We can link to a checkout page or payment modal here */}
-          <button className="btn" style={{background: 'var(--yellow)', color: '#000', fontWeight: 'bold'}}>Get Premium Access</button>
-        </div>
+        {user?.role !== "premium" ? (
+          <div style={{background: 'linear-gradient(135deg, var(--bg-card), var(--accent-dim))', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent)'}}>
+            <Crown size={32} style={{color: 'var(--yellow)', marginBottom: '16px'}}/>
+            <h2 style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '8px'}}>Upgrade to Premium</h2>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5'}}>
+              Get exclusive access to premium content, research journals, and advanced materials about India's freedom struggle.
+            </p>
+            <button 
+              className="btn" 
+              style={{background: 'var(--yellow)', color: '#000', fontWeight: 'bold'}}
+              onClick={handlePayment}
+              disabled={loading}
+            >
+              {loading ? <><Loader size={16} className="spin" /> Processing...</> : "Get Premium Access (₹499)"}
+            </button>
+          </div>
+        ) : (
+          <div style={{background: 'linear-gradient(135deg, var(--bg-card), var(--yellow-dim))', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--yellow)'}}>
+            <Crown size={32} style={{color: 'var(--yellow)', marginBottom: '16px'}}/>
+            <h2 style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '8px'}}>Premium Access Active</h2>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5'}}>
+              You have full access to our exclusive research portal and materials.
+            </p>
+            <Link to="/subscription" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center' }}>
+              Manage Subscription & Share <ArrowRight size={16} style={{ marginLeft: '8px' }} />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

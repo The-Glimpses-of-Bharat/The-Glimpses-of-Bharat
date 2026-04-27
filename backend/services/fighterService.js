@@ -22,11 +22,18 @@ class FighterService {
   }
 
   static async approveFighter(id) {
-    return await Fighter.findByIdAndUpdate(
+    const fighter = await Fighter.findByIdAndUpdate(
       id,
       { status: "approved" },
       { new: true }
     );
+    
+    if (fighter) {
+      const eventDispatcher = require("../patterns/observer/EventDispatcher");
+      eventDispatcher.emit("fighterApproved", fighter);
+    }
+    
+    return fighter;
   }
 
   static async rejectFighter(id) {
@@ -38,11 +45,13 @@ class FighterService {
   }
 
   static async getApprovedFighters() {
-    return await Fighter.find({ status: "approved" });
+    const FighterQueryBuilder = require("../patterns/builder/FighterQueryBuilder");
+    return await new FighterQueryBuilder().isApproved().execute();
   }
 
   static async getPendingFighters() {
-    return await Fighter.find({ status: "pending" });
+    const FighterQueryBuilder = require("../patterns/builder/FighterQueryBuilder");
+    return await new FighterQueryBuilder().isPending().execute();
   }
 }
 

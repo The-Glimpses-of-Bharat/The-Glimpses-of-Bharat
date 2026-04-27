@@ -75,6 +75,11 @@ export default function Login() {
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+              <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--accent)' }}>
+                Forgot Password?
+              </Link>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary btn-full patriotic-btn" disabled={loading}>

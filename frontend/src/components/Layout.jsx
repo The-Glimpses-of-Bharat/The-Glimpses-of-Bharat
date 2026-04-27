@@ -16,7 +16,9 @@ import {
   Brain,
   Trophy,
   MapPin,
-  BarChart3
+  BarChart3,
+  BookOpen,
+  Home
 } from "lucide-react";
 import ChatBot from "./ChatBot";
 
@@ -27,12 +29,14 @@ export default function Layout({ children }) {
 
   const getNavItems = (role) => {
     const items = [
+      { to: "/", icon: Home, label: "Home Page" },
       { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-      { to: "/profile", icon: UserCircle, label: "My Profile" },
+      { to: "/research", icon: BookOpen, label: "Research Portal" },
       { to: "/quiz", icon: Brain, label: "Quiz" },
       { to: "/leaderboard", icon: Trophy, label: "Leaderboard" },
       { to: "/map", icon: MapPin, label: "Heritage Map" },
-      { to: "/analytics", icon: BarChart3, label: "Analytics" }
+      { to: "/analytics", icon: BarChart3, label: "Analytics" },
+      { to: "/profile", icon: UserCircle, label: "My Profile" }
     ];
     items.push({ to: "/contribute", icon: PenLine, label: "Suggestion Portal" });
     if (role === "admin" || role === "contributor") {

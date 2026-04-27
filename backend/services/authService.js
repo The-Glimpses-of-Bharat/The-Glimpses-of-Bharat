@@ -13,7 +13,7 @@ class AuthService {
     }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) throw new Error("User already exists");
+    if (existingUser) throw new Error("This email is already registered. Please use a different email or log in.");
 
     // 🔥 hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,6 +24,9 @@ class AuthService {
       password: hashedPassword,
       role,
     });
+
+    const eventDispatcher = require("../patterns/observer/EventDispatcher");
+    eventDispatcher.emit("userSignup", user);
 
     return {
       _id: user._id,
@@ -54,16 +57,9 @@ class AuthService {
     isMatch = false;
   }
 
-  // 🔥 FORCE FIX (important)
   if (!isMatch) {
-    // overwrite old password
-    user.password = await bcrypt.hash(password, 10);
-    await user.save();
-
-    isMatch = true;
+    throw new Error("Invalid credentials");
   }
-
-  if (!isMatch) throw new Error("Invalid credentials");
 
   const strategy = UserFactory.getStrategy(user.role);
   const permissions = strategy.getPermissions();

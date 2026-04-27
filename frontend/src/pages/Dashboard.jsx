@@ -8,9 +8,7 @@ import UserDashboard from "./dashboards/UserDashboard";
 export default function Dashboard() {
   const { user } = useAuth();
 
-  if (!user) return null;
-
-  switch (user.role) {
+  switch (user?.role) {
     case "admin":
       return <AdminDashboard />;
     case "contributor":

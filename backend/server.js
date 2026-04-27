@@ -21,10 +21,25 @@ app.use(morgan("dev"));
 
 app.use(
   cors({
-    origin: [
-      "https://the-glimpse-of-bharat-code.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "https://the-glimpse-of-bharat-code.vercel.app",
+        "https://the-glimpses-of-bharat-sdse.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+      ];
+      
+      // Allow if no origin (e.g. mobile apps, curl) or if it's in the list
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else if (origin.endsWith('.vercel.app')) {
+        // Allow any vercel deployment for this project
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
@@ -40,6 +55,8 @@ app.use("/api/contributions", require("./routes/contributionRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/quiz", require("./routes/quizRoutes"));
+app.use("/api/payment", require("./routes/paymentRoutes"));
+app.use("/api/concerns", require("./routes/concernRoutes"));
 // Health check route
 app.get("/", (req, res) => {
   res.send("Glimpse of Bharat API running...");

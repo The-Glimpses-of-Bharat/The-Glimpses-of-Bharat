@@ -23,6 +23,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    studyHistory: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Fighter"
+    }],
+
+    watchLater: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Fighter"
+    }],
   },
   { timestamps: true }
 );

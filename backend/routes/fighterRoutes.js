@@ -9,7 +9,10 @@ const {
   approveFighter,
   rejectFighter,
   getApprovedFighters,
-  getPendingFighters
+  getPendingFighters,
+  readFighter,
+  likeFighter,
+  toggleWatchLater
 } = require("../controllers/fighterController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -19,6 +22,15 @@ router.get("/", getApprovedFighters);
 
 // Get single fighter
 router.get("/:id", getFighter);
+
+// Read fighter (increment view, add to history)
+router.post("/:id/read", protect, readFighter);
+
+// Like fighter
+router.post("/:id/like", protect, likeFighter);
+
+// Toggle watch later
+router.post("/:id/watch-later", protect, toggleWatchLater);
 
 // Create fighter
 router.post(
