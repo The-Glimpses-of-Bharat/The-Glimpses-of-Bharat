@@ -83,7 +83,7 @@ exports.updateProfile = async (req, res) => {
     res.json({
       message: "Profile updated successfully",
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
