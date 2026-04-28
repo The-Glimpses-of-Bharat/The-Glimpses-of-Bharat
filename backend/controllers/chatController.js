@@ -39,6 +39,7 @@ exports.askQuestion = async (req, res) => {
     res.status(200).json({ 
       answer: aiData.content,
       type: aiData.type,
+      actions: aiData.actions || [],
       history: [userMessage, assistantMessage]
     });
   } catch (error) {

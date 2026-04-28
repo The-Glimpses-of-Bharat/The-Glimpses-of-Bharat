@@ -44,6 +44,9 @@ class GeminiStrategy extends ChatStrategy {
         - "text": For simple conversation.
         - "steps": For directions, how-to guides, or process steps. (Format content as a numbered list).
         - "info": For structured historical data or architecture of the app.
+        - "actions": Optional array of objects like {"label": "Button Text", "path": "/route"} to provide quick navigation buttons.
+
+        ROUTES: /dashboard, /research, /contribute, /quiz, /leaderboard, /map, /subscription, /profile.
 
         RULES:
         1. DATABASE CHECK: First check "Database Context".
@@ -85,6 +88,7 @@ class GroqStrategy extends ChatStrategy {
                         - "steps": Use for directions or processes (e.g., how to contribute).
                         - "info": Use for structured history or app architecture.
                         - "text": For everything else.
+                        - "actions": (Optional) Add an "actions" array of objects like {"label": "Go to Map", "path": "/map"} for quick navigation. Available routes: /dashboard, /research, /contribute, /quiz, /leaderboard, /map, /subscription, /profile.
 
                         DATABASE: ${context}
                         APP INFO: ${appInfo}`

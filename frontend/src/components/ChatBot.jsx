@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "../api/axios";
-import { MessageSquare, Send, X, Bot, User, List, Info, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { MessageSquare, Send, X, Bot, User, List, Info, ChevronRight, ExternalLink } from "lucide-react";
 import "./ChatBot.css";
 
 export default function ChatBot() {
@@ -9,6 +10,7 @@ export default function ChatBot() {
   const [chatHistory, setChatHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,7 +34,8 @@ export default function ChatBot() {
       const assistantMessage = { 
         role: "assistant", 
         content: response.data.answer,
-        type: response.data.type || "text"
+        type: response.data.type || "text",
+        actions: response.data.actions || []
       };
       setChatHistory((prev) => [...prev, assistantMessage]);
     } catch (error) {
@@ -47,8 +50,35 @@ export default function ChatBot() {
   };
 
   const renderMessageContent = (msg) => {
+    const renderActions = () => {
+      if (!msg.actions || msg.actions.length === 0) return null;
+      return (
+        <div className="chat-actions" style={{display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px'}}>
+          {msg.actions.map((action, i) => (
+            <button 
+              key={i} 
+              className="chat-action-btn"
+              onClick={() => {
+                navigate(action.path);
+                setIsOpen(false);
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '8px 12px', borderRadius: '8px',
+                fontSize: '13px', fontWeight: '600',
+                background: 'var(--bg-3)', border: '1px solid var(--border)',
+                color: 'var(--accent)', cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              {action.label} <ExternalLink size={12} />
+            </button>
+          ))}
+        </div>
+      );
+    };
+
     if (msg.type === "steps") {
-      // Split content into steps (assuming AI provides a list or numbered lines)
       const steps = msg.content.split(/\n/).filter(line => line.trim().length > 0);
       return (
         <div className="steps-container">
@@ -59,6 +89,7 @@ export default function ChatBot() {
               <div className="step-text">{step.replace(/^\d+\.\s*/, '')}</div>
             </div>
           ))}
+          {renderActions()}
         </div>
       );
     }
@@ -71,11 +102,17 @@ export default function ChatBot() {
             <strong>Knowledge Architecture:</strong>
           </div>
           <div className="info-content">{msg.content}</div>
+          {renderActions()}
         </div>
       );
     }
 
-    return <div>{msg.content}</div>;
+    return (
+      <div>
+        {msg.content}
+        {renderActions()}
+      </div>
+    );
   };
 
   return (
