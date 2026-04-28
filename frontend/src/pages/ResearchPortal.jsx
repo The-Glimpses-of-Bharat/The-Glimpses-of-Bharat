@@ -100,7 +100,14 @@ export default function ResearchPortal() {
           <span style={{fontSize: '12px', color: 'var(--text-muted)'}}>{item.size}</span>
         </div>
         <h3 style={{fontSize: '18px', fontWeight: 'bold', marginBottom: '8px', lineHeight: '1.3'}}>{item.title}</h3>
-        <p style={{fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px'}}>{item.desc}</p>
+        <p style={{
+          fontSize: '14px', 
+          color: 'var(--text-secondary)', 
+          marginBottom: '8px',
+          filter: isPremium ? 'none' : 'blur(3px)',
+          userSelect: isPremium ? 'auto' : 'none',
+          transition: 'all 0.3s ease'
+        }}>{item.desc}</p>
         <p style={{fontSize: '13px', color: 'var(--text-muted)'}}>By {item.author}</p>
       </div>
       
@@ -140,25 +147,30 @@ export default function ResearchPortal() {
         </div>
       </div>
 
-      {!isPremium ? (
-        <div style={{background: 'linear-gradient(135deg, var(--bg-card), var(--accent-dim))', padding: '60px 24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent)', margin: '40px 0', textAlign: 'center'}}>
-          <Crown size={64} className="text-accent" style={{margin: '0 auto 24px', color: 'var(--yellow)'}}/>
-          <h2 style={{fontSize: '28px', fontWeight: 'bold', marginBottom: '16px'}}>Premium Portal Locked</h2>
-          <p style={{color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '18px', maxWidth: '600px', margin: '0 auto 32px', lineHeight: '1.6'}}>
-            The Research Portal contains highly exclusive archives, unredacted historical documents, and in-depth journals. You need a Premium Membership to unlock and download these materials.
-          </p>
+      {!isPremium && (
+        <div style={{background: 'linear-gradient(135deg, var(--bg-card), var(--accent-dim))', padding: '20px 24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent)', margin: '24px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.1)'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
+            <div style={{background: 'var(--yellow-dim)', padding: '12px', borderRadius: '12px'}}>
+              <Crown size={32} style={{color: 'var(--yellow)'}}/>
+            </div>
+            <div>
+              <h2 style={{fontSize: '18px', fontWeight: 'bold', marginBottom: '4px'}}>Unlock Full Archives</h2>
+              <p style={{color: 'var(--text-secondary)', fontSize: '14px'}}>Get premium access to download these unredacted historical documents.</p>
+            </div>
+          </div>
           <button 
             className="btn" 
-            style={{background: 'var(--yellow)', color: '#000', fontWeight: 'bold', fontSize: '18px', padding: '16px 32px', margin: '0 auto'}}
+            style={{background: 'var(--yellow)', color: '#000', fontWeight: 'bold', whiteSpace: 'nowrap', padding: '10px 24px'}}
             onClick={handlePayment}
             disabled={paymentLoading}
           >
-            {paymentLoading ? <><Loader size={20} className="spin" style={{marginRight: '8px'}} /> Processing...</> : "Unlock Premium Access (₹499)"}
+            {paymentLoading ? <Loader size={16} className="spin" /> : "Get Premium Access"}
           </button>
         </div>
-      ) : (
-        <>
-          <section style={{margin: '24px 0'}}>
+      )}
+
+      <div style={{ opacity: isPremium ? 1 : 0.85 }}>
+        <section style={{margin: '24px 0'}}>
         <div style={{position: 'relative', maxWidth: '100%'}}>
           <Search size={20} style={{position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)'}}/>
           <input 
@@ -262,8 +274,8 @@ export default function ResearchPortal() {
             <p>Try adjusting your search terms.</p>
           </div>
         )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
