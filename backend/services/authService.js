@@ -15,14 +15,14 @@ class AuthService {
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new Error("This email is already registered. Please use a different email or log in.");
 
-    // 🔥 hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Only allow "user" or "contributor" roles from signup
+    const finalRole = (role === "admin" || role === "premium") ? "user" : (role || "user");
 
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
-      role,
+      password,
+      role: finalRole,
     });
 
     const eventDispatcher = require("../patterns/observer/EventDispatcher");
