@@ -67,3 +67,31 @@ exports.getProfileStats = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, avatar } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (name) user.name = name;
+    if (avatar) user.avatar = avatar;
+
+    await user.save();
+
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isPremium: user.isPremium,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
