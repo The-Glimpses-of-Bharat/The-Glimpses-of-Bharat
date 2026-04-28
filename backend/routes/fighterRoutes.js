@@ -36,7 +36,7 @@ router.post("/:id/watch-later", protect, toggleWatchLater);
 router.post(
   "/",
   protect,
-  authorize("admin", "contributor", "user"),
+  authorize("admin", "contributor", "user", "premium"),
   createFighter
 );
 

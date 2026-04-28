@@ -118,7 +118,7 @@ export default function App() {
           <Route
             path="/contributions"
             element={
-              <ProtectedRoute allowedRoles={["admin", "contributor"]}>
+              <ProtectedRoute allowedRoles={["admin", "contributor", "user", "premium"]}>
                 <Contributions />
               </ProtectedRoute>
             }
@@ -126,7 +126,7 @@ export default function App() {
           <Route
             path="/contribute"
             element={
-              <ProtectedRoute allowedRoles={["admin", "contributor", "user"]}>
+              <ProtectedRoute allowedRoles={["admin", "contributor", "user", "premium"]}>
                 <ContributorPortal />
               </ProtectedRoute>
             }

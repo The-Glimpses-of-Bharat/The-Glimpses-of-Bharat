@@ -14,4 +14,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Handle 401 responses globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      // Optional: window.location.href = '/login'; if you want forced redirect
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

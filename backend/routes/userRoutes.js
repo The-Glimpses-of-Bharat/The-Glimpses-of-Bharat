@@ -8,7 +8,7 @@ router.get("/admin", protect, authorize("admin"), (req, res) => {
   res.json({ message: "Admin access granted" });
 });
 
-router.get("/premium-dashboard", protect, authorize("premium"), getPremiumDashboardData);
+router.get("/premium-dashboard", protect, authorize("premium", "admin"), getPremiumDashboardData);
 router.get("/profile-stats", protect, getProfileStats);
 
 module.exports = router;
