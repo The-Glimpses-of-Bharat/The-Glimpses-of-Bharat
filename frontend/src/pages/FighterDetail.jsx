@@ -161,7 +161,13 @@ export default function FighterDetail() {
                             <img
                                 src={fighter.image}
                                 alt={fighter.name}
-                                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+                                style={{ 
+                                    width: "100%", 
+                                    height: "100%", 
+                                    objectFit: "contain", 
+                                    objectPosition: "center",
+                                    background: "rgba(0,0,0,0.4)" 
+                                }}
                             />
                         ) : (
                             <div style={{

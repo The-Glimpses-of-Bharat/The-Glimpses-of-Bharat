@@ -25,7 +25,7 @@ export default function SubscriptionDetails() {
 
   const handlePayment = async () => {
     // Open the official Stripe Payment Link in a new tab
-    const stripeLink = "https://buy.stripe.com/test_8x24gyeTl1jj3X3gOCebu00";
+    const stripeLink = import.meta.env.VITE_STRIPE_BUY_LINK || "https://buy.stripe.com/test_8x24gyeTl1jj3X3gOCebu00";
     window.open(stripeLink, "_blank");
 
     // Since we don't have Stripe webhooks configured locally, 
