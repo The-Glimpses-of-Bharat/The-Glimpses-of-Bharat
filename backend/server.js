@@ -23,12 +23,9 @@ app.use(
   cors({
     origin: function (origin, callback) {
       const allowedOrigins = [
-        "https://the-glimpses-of-bharat-sdse-git-main-rudra-choudharys-projects.vercel.app/",
+        "https://the-glimpses-of-bharat-sdse-git-main-rudra-choudharys-projects.vercel.app",
         "https://the-glimpse-of-bharat-code.vercel.app",
-        "https://the-glimpses-of-bharat-sdse.vercel.app",
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
+        "https://the-glimpses-of-bharat-sdse.vercel.app"
       ];
       
       // Allow if no origin (e.g. mobile apps, curl) or if it's in the list
@@ -36,6 +33,9 @@ app.use(
         callback(null, true);
       } else if (origin.endsWith('.vercel.app')) {
         // Allow any vercel deployment for this project
+        callback(null, true);
+      } else if (origin.startsWith('http://localhost:')) {
+        // Allow any localhost port during development
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
