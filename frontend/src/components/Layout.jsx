@@ -128,12 +128,14 @@ export default function Layout({ children }) {
             <span style={{ textTransform: "capitalize" }}>{user?.role || "Dashboard"}</span>
           </div>
           <div className="topbar-user">
-            <div className="user-chip">
-              <div className="chip-avatar">
-                {user?.name?.charAt(0)?.toUpperCase() || "U"}
+            <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
+              <div className="user-chip" style={{ cursor: "pointer" }}>
+                <div className="chip-avatar">
+                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+                <span>{user?.name || "User"}</span>
               </div>
-              <span>{user?.name || "User"}</span>
-            </div>
+            </Link>
           </div>
         </div>
         <div className="page-content">{children}</div>
