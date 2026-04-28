@@ -41,8 +41,8 @@ export default function Layout({ children }) {
     if (role !== "admin") {
       items.push({ to: "/contribute", icon: PenLine, label: "Suggestion Portal" });
     }
-    items.push({ to: "/contributions", icon: Clock, label: "Contributions" });
     if (role === "admin") {
+      items.push({ to: "/contributions", icon: Clock, label: "Master Contributions" });
       items.push({ to: "/fighters", icon: Sword, label: "Freedom Fighters" });
       items.push({ to: "/users", icon: Users, label: "User Management" });
     }
