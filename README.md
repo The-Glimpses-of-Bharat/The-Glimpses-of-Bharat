@@ -175,7 +175,7 @@ Encapsulates different payment methods allowing flexible and extendable checkout
 * [ ] Migrate to TypeScript
 * [ ] Integrate AI Chatbot
 
-# Contributing
+# Contributing guide
 
 Contributions are welcome and appreciated!
 
@@ -196,7 +196,7 @@ Contributions are welcome and appreciated!
 
 # License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information .
 
 # Final Note
 
