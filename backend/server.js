@@ -25,8 +25,9 @@ app.use(
       const allowedOrigins = [
         "https://the-glimpses-of-bharat-sdse-git-main-rudra-choudharys-projects.vercel.app",
         "https://the-glimpse-of-bharat-code.vercel.app",
-        "https://the-glimpses-of-bharat-sdse.vercel.app"
-      ];
+        "https://the-glimpses-of-bharat-sdse.vercel.app",
+        process.env.FRONTEND_URL
+      ].filter(Boolean); // Remove null/undefined
       
       // Allow if no origin (e.g. mobile apps, curl) or if it's in the list
       if (!origin || allowedOrigins.includes(origin)) {
